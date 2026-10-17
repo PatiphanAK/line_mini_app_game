@@ -18,4 +18,4 @@ services:
       - key: QWEN_BASE_URL
         value: https://dashscope-intl.aliyuncs.com/compatible-mode/v1
       - key: QWEN_MODEL
-        value: qwen-plus
+        value: qwen3.8-flash
