@@ -4,7 +4,7 @@ import { extname, join, normalize, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { Room, getRoom } from './game.js';
-import { hasQwenKey } from './qwen.js';
+import { hasClaudeKey } from './claude.js';
 
 const PORT = Number(process.env.PORT) || 3000;
 const PUBLIC_DIR = fileURLToPath(new URL('../public/', import.meta.url));
@@ -24,7 +24,7 @@ const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://x');
   if (url.pathname === '/healthz') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ ok: true, qwen: hasQwenKey }));
+    return res.end(JSON.stringify({ ok: true, claude: hasClaudeKey }));
   }
   let path = decodeURIComponent(url.pathname);
   if (path === '/') path = '/index.html';
@@ -126,5 +126,5 @@ wss.on('close', () => clearInterval(heartbeat));
 
 server.listen(PORT, () => {
   console.log(`Quiz server on http://localhost:${PORT}`);
-  console.log(hasQwenKey ? 'Qwen question generation: enabled' : 'Qwen: no QWEN_API_KEY, using sample questions');
+  console.log(hasClaudeKey ? 'Claude question generation: enabled' : 'Claude: no ANTHROPIC_API_KEY, using sample questions');
 });

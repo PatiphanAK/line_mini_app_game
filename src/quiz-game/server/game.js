@@ -3,7 +3,7 @@
 // desync anyone. Every state change re-sends a full snapshot.
 
 import { randomBytes, randomInt } from 'node:crypto';
-import { generateQuestions, hasQwenKey, FALLBACK_QUESTIONS } from './qwen.js';
+import { generateQuestions, hasClaudeKey, FALLBACK_QUESTIONS } from './claude.js';
 
 const PREVIEW_MS = 3000;
 const ANSWER_GRACE_MS = 400;
@@ -46,16 +46,16 @@ export class Room {
   touch() { this.lastActivity = Date.now(); }
 
   async loadQuestions(opts) {
-    if (!hasQwenKey) {
+    if (!hasClaudeKey) {
       this.questions = FALLBACK_QUESTIONS;
-      this.genNote = 'No QWEN_API_KEY set: using built-in sample questions.';
+      this.genNote = 'No ANTHROPIC_API_KEY set: using built-in sample questions.';
     } else {
       try {
         this.questions = await generateQuestions(opts);
       } catch (err) {
         console.error(`[room ${this.pin}] question generation failed:`, err.message);
         this.questions = FALLBACK_QUESTIONS;
-        this.genNote = `Qwen failed (${err.message.slice(0, 120)}). Using sample questions.`;
+        this.genNote = `Claude failed (${err.message.slice(0, 120)}). Using sample questions.`;
       }
     }
     if (!rooms.has(this.pin)) return; // room was collected while waiting
