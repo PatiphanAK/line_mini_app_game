@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz Blitz Host</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <canvas id="bg3d"></canvas>
+  <div class="status" id="status">Connecting…</div>
+  <div class="toast" id="toast"></div>
+
+  <div class="app">
+    <!-- setup -->
+    <section class="screen active" data-screen="setup">
+      <div class="logo">Quiz<span>Blitz</span></div>
+      <form class="card" id="setup">
+        <h2>Create a quiz with Qwen</h2>
+        <label>Topic
+          <input name="topic" placeholder="e.g. Thai history, JavaScript, space…" maxlength="120" required />
+        </label>
+        <div class="row">
+          <label>Questions
+            <select name="count">
+              <option>5</option><option selected>8</option><option>10</option><option>15</option><option>20</option>
+            </select>
+          </label>
+          <label>Difficulty
+            <select name="difficulty">
+              <option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option>
+            </select>
+          </label>
+        </div>
+        <label>Language
+          <select name="language">
+            <option>English</option><option>Thai</option><option>Japanese</option><option>Chinese</option>
+          </select>
+        </label>
+        <button class="btn primary" id="createBtn">Generate &amp; open lobby</button>
+      </form>
+    </section>
+
+    <!-- lobby -->
+    <section class="screen" data-screen="lobby">
+      <div class="pin-box">
+        <small>Join at <span class="join-url" id="joinUrl"></span> · Game PIN</small>
+        <div class="pin" id="pin">------</div>
+      </div>
+      <div class="pill" id="topicPill"></div>
+      <div class="note" id="genNote" hidden></div>
+      <div id="genStatus" style="display:flex;gap:12px;align-items:center"><div class="spinner"></div><b>Qwen is writing your questions…</b></div>
+      <h2 id="playerCount">Waiting for players…</h2>
+      <div class="players" id="players"></div>
+      <div class="muted" style="font-size:13px">Click a name to remove a player</div>
+    </section>
+
+    <!-- preview / question / reveal share this layout -->
+    <section class="screen" data-screen="question">
+      <div class="q-meta">
+        <span class="pill" id="qCounter"></span>
+        <span class="pill" id="answeredPill"></span>
+      </div>
+      <div class="q-text" id="qText"></div>
+      <div class="timer" id="timer" data-s=""></div>
+      <div class="bars" id="bars" hidden></div>
+      <div class="answers" id="answers"></div>
+    </section>
+
+    <section class="screen" data-screen="leaderboard">
+      <h1 style="font-size:44px">Scoreboard</h1>
+      <div class="board" id="board"></div>
+    </section>
+
+    <section class="screen" data-screen="ended" style="justify-content:flex-start;padding-top:40px">
+      <h1 style="font-size:48px;text-shadow:0 4px 0 rgba(0,0,0,.3)">🏆 Podium</h1>
+    </section>
+  </div>
+
+  <div class="top-left">
+    <button class="btn ghost" id="endBtn" hidden>End game</button>
+  </div>
+  <div class="host-bar">
+    <button class="btn light" id="primaryBtn" hidden></button>
+  </div>
+
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
+  </script>
+  <script type="module" src="/js/host.js"></script>
+</body>
+</html>

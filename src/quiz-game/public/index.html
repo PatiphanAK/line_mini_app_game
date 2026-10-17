@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz Blitz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <canvas id="bg3d"></canvas>
+  <div class="app">
+    <section class="screen active">
+      <div class="logo">Quiz<span>Blitz</span></div>
+      <form class="card" id="join">
+        <h2>Join a game</h2>
+        <label>Game PIN
+          <input name="pin" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="123456" required autocomplete="off" />
+        </label>
+        <button class="btn primary">Enter</button>
+      </form>
+      <a class="btn light" href="/host" style="text-decoration:none">Host a new game →</a>
+    </section>
+  </div>
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" } }
+  </script>
+  <script type="module">
+    import { createScene } from '/js/scene3d.js';
+    createScene(document.getElementById('bg3d'));
+    document.getElementById('join').addEventListener('submit', (e) => {
+      e.preventDefault();
+      location.href = `/play?pin=${encodeURIComponent(e.target.pin.value.trim())}`;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+# Render Blueprint for src/quiz-game.
+# Game state lives in memory, so keep exactly ONE instance.
+services:
+  - type: web
+    name: quiz-blitz
+    runtime: node
+    rootDir: src/quiz-game
+    plan: free
+    numInstances: 1
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: QWEN_API_KEY
+        sync: false   # entered in the Render dashboard, never committed
+      - key: QWEN_BASE_URL
+        value: https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+      - key: QWEN_MODEL
+        value: qwen-plus

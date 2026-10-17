@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Quiz Blitz Play</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="status" id="status">Connecting…</div>
+  <div class="toast" id="toast"></div>
+
+  <div class="app player-app">
+    <section class="screen active" data-screen="join">
+      <div class="logo">Quiz<span>Blitz</span></div>
+      <form class="card" id="join">
+        <label>Game PIN
+          <input name="pin" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="123456" required autocomplete="off" />
+        </label>
+        <label>Nickname
+          <input name="name" maxlength="16" placeholder="Your name" required autocomplete="nickname" />
+        </label>
+        <button class="btn primary" id="joinBtn">Join</button>
+      </form>
+    </section>
+
+    <section class="screen" data-screen="lobby">
+      <h2>You're in!</h2>
+      <div class="big-name" id="lobbyName"></div>
+      <p class="muted">See your nickname on the big screen?<br />The game starts soon.</p>
+      <div class="spinner"></div>
+    </section>
+
+    <section class="screen" data-screen="preview">
+      <span class="pill" id="pvCounter"></span>
+      <h2 id="pvText" style="font-size:24px"></h2>
+      <div class="timer small" id="pvTimer" data-s=""></div>
+    </section>
+
+    <section class="screen" data-screen="question" style="justify-content:flex-start">
+      <div class="q-meta"><span class="pill" id="qCounter"></span><div class="timer small" id="qTimer" data-s=""></div></div>
+      <div style="font-weight:800;font-size:18px" id="qText"></div>
+      <div class="play-answers" id="answers"></div>
+    </section>
+
+    <section class="screen" data-screen="waiting">
+      <div class="spinner"></div>
+      <h2 id="waitTitle">Answer locked in</h2>
+      <p class="muted" id="waitSub">Waiting for the others…</p>
+    </section>
+
+    <section class="screen" data-screen="result">
+      <div class="result-icon" id="resIcon"></div>
+      <div class="result" id="resTitle"></div>
+      <div class="pill" id="resPoints"></div>
+      <p id="resSub"></p>
+    </section>
+
+    <section class="screen" data-screen="rank">
+      <h2 id="rankTitle" style="font-size:36px"></h2>
+      <p id="rankSub" style="font-size:18px"></p>
+    </section>
+
+    <section class="screen" data-screen="message">
+      <h2 id="msgTitle"></h2>
+      <a class="btn light" href="/" style="text-decoration:none">Back to start</a>
+    </section>
+  </div>
+
+  <div class="score-strip" id="strip" hidden><span id="stripName"></span><span id="stripScore"></span></div>
+
+  <script type="module" src="/js/play.js"></script>
+</body>
+</html>

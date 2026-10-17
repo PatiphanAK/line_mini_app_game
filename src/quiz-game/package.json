@@ -1,0 +1,17 @@
+{
+  "name": "quiz-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kahoot-style live quiz: Three.js host screen, Qwen-generated questions, WebSocket realtime",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "dev": "node --watch --env-file-if-exists=.env server/index.js"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "ws": "^8.22.0"
+  }
+}
