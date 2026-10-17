@@ -3,13 +3,13 @@
 A Kahoot-style live quiz game:
 
 - **Three.js** host screen: floating answer shapes that speed up and redden as time runs out, react to the correct answer, and a 3D podium with confetti at the end.
-- **Claude** (Anthropic API, `claude-opus-5-5`) writes the questions from any topic, difficulty and language.
+- **Qwen** (Alibaba Cloud Model Studio / DashScope) writes the questions from any topic, difficulty and language.
 - **WebSocket** realtime with a server-authoritative game loop built for unreliable mobile networks.
 
 ## Run
 
 ```bash
-cp .env.example .env   # put your ANTHROPIC_API_KEY in it
+cp .env.example .env   # put your QWEN_API_KEY in it
 npm install
 npm start              # http://localhost:3000
 ```
@@ -17,7 +17,7 @@ npm start              # http://localhost:3000
 - Big screen: open `http://<your-ip>:3000/host`, enter a topic, then **Start**.
 - Phones: open `http://<your-ip>:3000/play` and enter the PIN.
 
-If no `ANTHROPIC_API_KEY` is set, or Claude fails, the game falls back to built-in sample questions so it still runs.
+If no `QWEN_API_KEY` is set, or Qwen fails, the game falls back to built-in sample questions so it still runs.
 
 ## How reliability works
 
@@ -38,7 +38,7 @@ If no `ANTHROPIC_API_KEY` is set, or Claude fails, the game falls back to built-
 ```
 server/index.js   HTTP static server + WebSocket routing + heartbeat
 server/game.js    Room state machine: lobby → preview → question → reveal → leaderboard → … → ended
-server/claude.js  Claude prompt, JSON schema + validation, choice shuffling, fallback questions
+server/qwen.js    Qwen prompt, JSON validation, choice shuffling, fallback questions
 public/js/net.js  ReliableSocket (reconnect, ping, ack outbox, clock sync)
 public/js/scene3d.js  Three.js scene
 public/js/host.js / play.js   Host screen and phone controller
