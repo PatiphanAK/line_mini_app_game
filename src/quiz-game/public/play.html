@@ -16,6 +16,7 @@
     <section class="screen active" data-screen="join">
       <div class="logo">Quiz<span>Blitz</span></div>
       <form class="card" id="join">
+        <div class="line-profile" id="lineProfile" hidden></div>
         <label>Game PIN
           <input name="pin" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="123456" required autocomplete="off" />
         </label>
@@ -23,13 +24,15 @@
           <input name="name" maxlength="16" placeholder="Your name" required autocomplete="nickname" />
         </label>
         <button class="btn primary" id="joinBtn">Join</button>
+        <button type="button" class="btn line-login" id="lineLogin" hidden>Use my LINE profile</button>
       </form>
     </section>
 
     <section class="screen" data-screen="lobby">
       <h2>You're in!</h2>
+      <div id="lobbyAvatar"></div>
       <div class="big-name" id="lobbyName"></div>
-      <p class="muted">See your nickname on the big screen?<br />The game starts soon.</p>
+      <p class="muted">See yourself on the big screen?<br />The game starts soon.</p>
       <div class="spinner"></div>
     </section>
 
@@ -69,8 +72,9 @@
     </section>
   </div>
 
-  <div class="score-strip" id="strip" hidden><span id="stripName"></span><span id="stripScore"></span></div>
+  <div class="score-strip" id="strip" hidden><span class="strip-me"><span id="stripAvatar"></span><span id="stripName"></span></span><span id="stripScore"></span></div>
 
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <script type="module" src="/js/play.js"></script>
 </body>
 </html>

@@ -199,3 +199,13 @@ export function statusBadge(el) {
     el.textContent = labels[status] || status;
   };
 }
+
+// LINE profile photo, or a coloured initial when the player has none.
+export function avatar(p, size = 32) {
+  const style = `width:${size}px;height:${size}px;font-size:${Math.round(size * 0.5)}px`;
+  if (p.picture) return `<img class="avatar" src="${esc(p.picture)}" alt="" style="${style}" referrerpolicy="no-referrer" loading="lazy" />`;
+  const name = String(p.name ?? '?');
+  let h = 0;
+  for (const ch of name) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+  return `<span class="avatar" style="${style};background:${COLORS[h % COLORS.length]}">${esc([...name][0]?.toUpperCase() || '?')}</span>`;
+}

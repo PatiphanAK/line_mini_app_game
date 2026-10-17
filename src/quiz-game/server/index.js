@@ -10,6 +10,7 @@ const PORT = Number(process.env.PORT) || 3000;
 const PUBLIC_DIR = fileURLToPath(new URL('../public/', import.meta.url));
 const HEARTBEAT_MS = 15_000;
 const MSGS_PER_SEC = 20;
+const LIFF_ID = process.env.LIFF_ID || '';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -25,6 +26,10 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === '/healthz') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     return res.end(JSON.stringify({ ok: true, qwen: hasQwenKey }));
+  }
+  if (url.pathname === '/config') {
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
+    return res.end(JSON.stringify({ liffId: LIFF_ID }));
   }
   let path = decodeURIComponent(url.pathname);
   if (path === '/') path = '/index.html';
@@ -103,7 +108,7 @@ function handle(ws, msg) {
   if (msg.t === 'player:join' || msg.t === 'player:resume') {
     const room = getRoom(msg.pin);
     if (!room) return reply(ws, { t: 'error', code: msg.t === 'player:resume' ? 'unknown_session' : 'bad_pin', message: 'Game PIN not found.' });
-    return msg.t === 'player:join' ? room.addPlayer(ws, msg.name) : room.resumePlayer(ws, msg.token);
+    return msg.t === 'player:join' ? room.addPlayer(ws, msg.name, msg.picture) : room.resumePlayer(ws, msg.token);
   }
 
   const ctx = ws.ctx;
@@ -126,5 +131,6 @@ wss.on('close', () => clearInterval(heartbeat));
 
 server.listen(PORT, () => {
   console.log(`Quiz server on http://localhost:${PORT}`);
+  console.log(LIFF_ID ? `LINE profiles: enabled (LIFF ${LIFF_ID})` : 'LINE profiles: no LIFF_ID, nickname only');
   console.log(hasQwenKey ? 'Qwen question generation: enabled' : 'Qwen: no QWEN_API_KEY, using sample questions');
 });

@@ -125,7 +125,8 @@ input:focus, select:focus { outline: none; border-color: var(--bg-2); }
 .pin-box .pin { font-size: clamp(48px, 9vw, 84px); font-weight: 900; letter-spacing: 0.06em; line-height: 1; }
 .join-url { font-weight: 700; word-break: break-all; }
 .players { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 960px; }
-.chip { background: rgba(0, 0, 0, 0.4); padding: 8px 14px; border-radius: 6px; font-weight: 800; font-size: 18px; animation: pop 0.25s ease-out; cursor: pointer; }
+.avatar { display: inline-grid; place-items: center; flex: none; border-radius: 50%; object-fit: cover; background: rgba(255, 255, 255, 0.2); color: #fff; font-weight: 900; line-height: 1; }
+.chip { display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.4); padding: 6px 14px 6px 6px; border-radius: 6px; font-weight: 800; font-size: 18px; animation: pop 0.25s ease-out; cursor: pointer; }
 .chip.offline { opacity: 0.4; }
 .chip:hover { text-decoration: line-through; }
 @keyframes pop { from { transform: scale(0.6); opacity: 0; } }
@@ -183,6 +184,7 @@ input:focus, select:focus { outline: none; border-color: var(--bg-2); }
 .board { width: min(720px, 100%); display: flex; flex-direction: column; gap: 10px; }
 .board-row { display: flex; justify-content: space-between; align-items: center; background: #fff; color: var(--ink); padding: 14px 20px; border-radius: 8px; font-weight: 900; font-size: clamp(18px, 2.4vw, 26px); animation: slide 0.4s ease-out backwards; }
 .board-row:first-child { background: #ffd54f; }
+.board-row .who { display: flex; align-items: center; gap: 12px; min-width: 0; }
 @keyframes slide { from { transform: translateX(-40px); opacity: 0; } }
 
 .host-bar { position: fixed; bottom: 14px; right: 14px; z-index: 5; display: flex; gap: 10px; }
@@ -204,6 +206,9 @@ body.wrong { background: var(--bad); }
 .score-strip { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3; background: #fff; color: var(--ink); display: flex; justify-content: space-between; padding: 12px 16px; font-weight: 900; font-size: 18px; }
 .player-app { padding-bottom: 56px; }
 .big-name { font-size: 32px; font-weight: 900; }
+.strip-me { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.line-profile { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.line-login { background: #06c755; color: #fff; }
 
 @media (max-width: 640px) {
   .answers { grid-template-columns: 1fr; }

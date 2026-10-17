@@ -17,6 +17,14 @@ npm start              # http://localhost:3000
 - Big screen: open `http://<your-ip>:3000/host`, enter a topic, then **Start**.
 - Phones: open `http://<your-ip>:3000/play` and enter the PIN.
 
+### Show players' LINE photo and name (optional)
+
+1. In the [LINE Developers console](https://developers.line.biz/console/), add a LIFF app to a LINE Login channel with **Endpoint URL** `https://<your-host>/play` and the `profile` scope.
+2. Put its ID in `.env` as `LIFF_ID=...` and restart.
+3. Share the LIFF URL (`https://liff.line.me/<LIFF_ID>?pin=123456`). Players who open it in LINE get their display name filled in (they can still edit it), and their profile photo appears in the lobby, on the scoreboard and on their phone. In an external browser they see a **Use my LINE profile** button; without a `LIFF_ID` the game works with nicknames only.
+
+The server only accepts picture URLs on LINE's CDN (`profile.line-scdn.net`), so a player can't push an arbitrary image to every screen.
+
 If no `QWEN_API_KEY` is set, or Qwen fails, the game falls back to built-in sample questions so it still runs.
 
 ## How reliability works

@@ -1,4 +1,4 @@
-import { ReliableSocket, shapeSVG, esc, statusBadge } from './net.js';
+import { ReliableSocket, shapeSVG, esc, statusBadge, avatar } from './net.js';
 import { createScene } from './scene3d.js';
 
 const $ = (id) => document.getElementById(id);
@@ -109,7 +109,7 @@ function render() {
     $('genNote').hidden = !s.genNote;
     $('genNote').textContent = s.genNote || '';
     $('playerCount').textContent = s.players.length ? `${s.players.length} player${s.players.length > 1 ? 's' : ''}` : 'Waiting for players…';
-    $('players').innerHTML = s.players.map((p) => `<span class="chip ${p.online ? '' : 'offline'}" data-id="${esc(p.id)}">${esc(p.name)}</span>`).join('');
+    $('players').innerHTML = s.players.map((p) => `<span class="chip ${p.online ? '' : 'offline'}" data-id="${esc(p.id)}" data-name="${esc(p.name)}">${avatar(p, 34)}${esc(p.name)}</span>`).join('');
     primary(s.ready ? 'Start' : 'Generating…', 'start', s.ready && s.players.length > 0);
     if (phaseChanged) scene3d.setMode('lobby');
     return;
@@ -155,7 +155,7 @@ function render() {
     show('leaderboard');
     $('board').innerHTML = s.leaderboard.map((p, i) => `
       <div class="board-row" style="animation-delay:${i * 80}ms">
-        <span>${i + 1}. ${esc(p.name)}${p.streak >= 2 ? ` 🔥${p.streak}` : ''}</span><span>${p.score.toLocaleString()}</span>
+        <span class="who">${i + 1}. ${avatar(p, 40)}${esc(p.name)}${p.streak >= 2 ? ` 🔥${p.streak}` : ''}</span><span>${p.score.toLocaleString()}</span>
       </div>`).join('');
     primary('Next question', 'next');
     if (phaseChanged) scene3d.setMode('leaderboard');
@@ -171,7 +171,7 @@ function render() {
 
 $('players').addEventListener('click', (e) => {
   const chip = e.target.closest('.chip');
-  if (chip && confirm(`Remove ${chip.textContent}?`)) net.send({ t: 'host:kick', playerId: chip.dataset.id });
+  if (chip && confirm(`Remove ${chip.dataset.name}?`)) net.send({ t: 'host:kick', playerId: chip.dataset.id });
 });
 
 // Countdown is drawn locally from the server's deadline, corrected for clock offset.

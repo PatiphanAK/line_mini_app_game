@@ -19,3 +19,5 @@ services:
         value: https://dashscope-intl.aliyuncs.com/compatible-mode/v1
       - key: QWEN_MODEL
         value: qwen3.8-flash
+      - key: LIFF_ID
+        sync: false   # optional: LIFF app whose endpoint is https://<service>.onrender.com/play

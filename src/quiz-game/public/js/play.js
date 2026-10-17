@@ -1,4 +1,4 @@
-import { ReliableSocket, shapeSVG, esc, statusBadge } from './net.js';
+import { ReliableSocket, shapeSVG, esc, statusBadge, avatar } from './net.js';
 
 const $ = (id) => document.getElementById(id);
 const SESSION_KEY = 'quiz-player';
@@ -10,6 +10,8 @@ let pendingJoin = null;
 let state = null;
 // What this phone picked, shown immediately before the server confirms.
 let local = { qIndex: -1, choice: null, acked: false };
+// LINE profile from LIFF ({ displayName, pictureUrl }), when opened inside LINE or logged in.
+let lineProfile = null;
 
 $('join').pin.value = urlPin || session?.pin || '';
 if (urlPin) $('join').name.focus();
@@ -23,6 +25,29 @@ const net = new ReliableSocket({
   onStatus: statusBadge($('status')),
 });
 net.connect();
+initLine();
+
+// LIFF is optional: without a LIFF_ID, or if LINE is unreachable, players
+// just type a nickname like before.
+async function initLine() {
+  try {
+    const { liffId } = await (await fetch('/config')).json();
+    if (!liffId || !window.liff) return;
+    await liff.init({ liffId });
+    if (!liff.isLoggedIn()) {
+      $('lineLogin').hidden = false;
+      $('lineLogin').onclick = () => liff.login({ redirectUri: location.href });
+      return;
+    }
+    lineProfile = await liff.getProfile();
+    const nameInput = $('join').name;
+    if (!nameInput.value) nameInput.value = [...lineProfile.displayName].slice(0, 16).join('').trim();
+    $('lineProfile').innerHTML = `${avatar({ name: lineProfile.displayName, picture: lineProfile.pictureUrl }, 44)}<span>Playing as your LINE profile</span>`;
+    $('lineProfile').hidden = false;
+  } catch (err) {
+    console.warn('LIFF unavailable, using nickname only:', err);
+  }
+}
 
 function load() {
   try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch { return null; }
@@ -34,7 +59,7 @@ function save(s) {
 
 $('join').addEventListener('submit', (e) => {
   e.preventDefault();
-  pendingJoin = { t: 'player:join', pin: e.target.pin.value.trim(), name: e.target.name.value.trim() };
+  pendingJoin = { t: 'player:join', pin: e.target.pin.value.trim(), name: e.target.name.value.trim(), picture: lineProfile?.pictureUrl };
   $('joinBtn').disabled = true;
   if (net.isOpen()) net.send(pendingJoin);
 });
@@ -81,10 +106,12 @@ function render() {
   document.body.classList.remove('correct', 'wrong');
   $('strip').hidden = false;
   $('stripName').textContent = s.me.name;
+  $('stripAvatar').innerHTML = avatar(s.me, 28);
   $('stripScore').textContent = s.me.score.toLocaleString();
 
   if (s.phase === 'lobby') {
     $('lobbyName').textContent = s.me.name;
+    $('lobbyAvatar').innerHTML = avatar(s.me, 96);
     return show('lobby');
   }
 

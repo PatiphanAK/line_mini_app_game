@@ -14,6 +14,11 @@ const ROOM_EMPTY_MS = 30 * 60_000;
 
 const rooms = new Map(); // pin -> Room
 
+// Only accept LINE profile pictures, so a client can't make every screen
+// load an arbitrary (tracking or offensive) image URL.
+const LINE_PICTURE = /^https:\/\/(profile|obs)\.line-scdn\.net\/[\w\-./~%]+$/;
+const cleanPicture = (url) => (typeof url === 'string' && url.length <= 512 && LINE_PICTURE.test(url) ? url : null);
+
 const token = () => randomBytes(18).toString('base64url');
 
 function send(ws, msg) {
@@ -76,7 +81,7 @@ export class Room {
     this.sendSnapshot(ws);
   }
 
-  addPlayer(ws, rawName) {
+  addPlayer(ws, rawName, rawPicture) {
     const name = String(rawName ?? '').trim().replace(/\s+/g, ' ').slice(0, 16);
     if (!name) return send(ws, { t: 'error', code: 'bad_name', message: 'Please enter a nickname.' });
     if (this.phase === 'ended') return send(ws, { t: 'error', code: 'ended', message: 'This game has ended.' });
@@ -88,6 +93,7 @@ export class Room {
       id: token().slice(0, 10),
       token: token(),
       name,
+      picture: cleanPicture(rawPicture),
       score: 0,
       streak: 0,
       socket: null,
@@ -95,7 +101,7 @@ export class Room {
       answers: new Map(), // qIndex -> { choice, at, correct, points }
     };
     this.players.set(player.id, player);
-    send(ws, { t: 'joined', pin: this.pin, playerId: player.id, token: player.token, name });
+    send(ws, { t: 'joined', pin: this.pin, playerId: player.id, token: player.token, name, picture: player.picture });
     this.bindPlayer(player, ws);
     this.broadcast();
   }
@@ -103,7 +109,7 @@ export class Room {
   resumePlayer(ws, tok) {
     const player = [...this.players.values()].find((p) => p.token === tok);
     if (!player) return send(ws, { t: 'error', code: 'unknown_session', message: 'Session expired. Please join again.' });
-    send(ws, { t: 'joined', pin: this.pin, playerId: player.id, token: player.token, name: player.name });
+    send(ws, { t: 'joined', pin: this.pin, playerId: player.id, token: player.token, name: player.name, picture: player.picture });
     this.bindPlayer(player, ws);
     this.broadcast();
   }
@@ -290,7 +296,7 @@ export class Room {
         role: 'host',
         topic: this.topic,
         genNote: this.genNote,
-        players: ranked.map((p) => ({ id: p.id, name: p.name, score: p.score, online: !!p.socket })),
+        players: ranked.map((p) => ({ id: p.id, name: p.name, picture: p.picture, score: p.score, online: !!p.socket })),
         answered: this.phase === 'question' ? [...this.players.values()].filter((p) => p.answers.has(this.qIndex)).length : 0,
       });
       if (revealed) {
@@ -309,13 +315,13 @@ export class Room {
       const a = p.answers.get(this.qIndex);
       Object.assign(base, {
         role: 'player',
-        me: { id: p.id, name: p.name, score: p.score, streak: p.streak, rank, of: ranked.length },
+        me: { id: p.id, name: p.name, picture: p.picture, score: p.score, streak: p.streak, rank, of: ranked.length },
         myAnswer: a ? { choice: a.choice, ...(revealed || this.phase === 'leaderboard' || this.phase === 'ended' ? { correct: a.correct, points: a.correct ? a.points : 0 } : {}) } : null,
         ahead: rank > 1 ? { name: ranked[rank - 2].name, gap: ranked[rank - 2].score - p.score } : null,
       });
     }
     if (['leaderboard', 'ended'].includes(this.phase)) {
-      base.leaderboard = this.ranked().slice(0, 5).map((p) => ({ name: p.name, score: p.score, streak: p.streak }));
+      base.leaderboard = this.ranked().slice(0, 5).map((p) => ({ name: p.name, picture: p.picture, score: p.score, streak: p.streak }));
     }
     send(ws, base);
   }
